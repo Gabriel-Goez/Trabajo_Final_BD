@@ -3,25 +3,31 @@
 // Crear conexión con la BD
 require('../config/conexion.php');
 
-// Sacar los datos del formulario. Cada input se identifica con su "name"
-$codigo = $_POST["codigo"];
-$fechacreacion = $_POST["fechacreacion"];
-$valor = $_POST["valor"];
-$cliente = $_POST["cliente"];
-$empresa = $_POST["empresa"];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $identificador = $_POST['identificador'];
+    $nombre = $_POST['nombre'];
 
-// Query SQL a la BD. Si tienen que hacer comprobaciones, hacerlas acá (Generar una query diferente para casos especiales)
-$query = "INSERT INTO `proyecto`(`codigo`,`fechacreacion`, `valor`, `cliente`, `empresa`) VALUES ('$codigo', '$fechacreacion', '$valor', '$cliente', '$empresa')";
+    // Validar que el identificador no tenga más de 4 dígitos
+    if ($identificador > 9999) {
+        // Redirigir al usuario con un mensaje de error
+        header("Location: rol.php?error=digits");
+        exit(); // Detener la ejecución del script
+    }
 
-// Ejecutar consulta
-$result = mysqli_query($conn, $query) or die(mysqli_error($conn));
+    // Consulta para insertar datos
+    $query = "INSERT INTO rol (identificador, nombre) VALUES ('$identificador', '$nombre')";
 
-// Redirigir al usuario a la misma pagina
-if($result):
-    // Si fue exitosa, redirigirse de nuevo a la página de la entidad
-	header("Location: proyecto.php");
-else:
-	echo "Ha ocurrido un error al crear la persona";
-endif;
+    // Ejecutar consulta
+    $result = mysqli_query($conn, $query) or die(mysqli_error($conn));
 
-mysqli_close($conn);
+    // Redirigir al usuario a la misma página (rol.php)
+    if ($result) {
+        header("Location: rol.php?success=1");
+    } else {
+        header("Location: rol.php?error=1");
+    }
+
+    // Cerrar la conexión
+    mysqli_close($conn);
+}
+?>

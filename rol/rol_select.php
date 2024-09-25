@@ -3,10 +3,14 @@
 // Crear conexión con la BD
 require('../config/conexion.php');
 
-// Query SQL a la BD
-$query = "SELECT * FROM proyecto";
+// Consulta para obtener los roles
+$query = "SELECT * FROM rol";
 
-// Ejecutar la consulta
-$resultadoProyecto = mysqli_query($conn, $query) or die(mysqli_error($conn));
+$resultadoRol = $conn->query($query);
 
-mysqli_close($conn);
+if (!$resultadoRol) {
+    echo "Error al obtener los roles: " . $conn->error;
+}
+
+// No cerrar la conexión aquí, ya que se usará más adelante
+?>

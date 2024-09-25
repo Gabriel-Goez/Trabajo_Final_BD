@@ -43,9 +43,9 @@
     <div class="enlaces">
         <h2>Enlaces</h2>
         <ul>
-            <li><a href="cliente/cliente.php">Entidad análoga a CLIENTE (NOMBRE)</a></li>
-            <li><a href="empresa/empresa.php">Entidad análoga a EMPRESA (NOMBRE)</a></li>
-            <li><a href="proyecto/proyecto.php">Entidad análoga a PROYECTO (NOMBRE)</a></li>
+            <li><a href="bibliotecario/bibliotecario.php">Entidad análoga a MECÁNICO (BIBLIOTECARIO)</a></li>
+            <li><a href="ejemplar/ejemplar.php">Entidad análoga a REVISIÓN (EJEMPLAR)</a></li>
+            <li><a href="rol/rol.php">Entidad análoga a DEPARTAMENTO (ROL)</a></li>
             <li><a href="consultas/consulta1.php">Consulta 1</a></li>
             <li><a href="consultas/consulta2.php">Consulta 2</a></li>
             <li><a href="busqueda/busqueda1.php">Búsqueda 1</a></li>
