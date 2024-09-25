@@ -3,23 +3,28 @@
 // Crear conexión con la BD
 require('../config/conexion.php');
 
-// Sacar los datos del formulario. Cada input se identifica con su "name"
-$cedula = $_POST["cedula"];
-$nombre = $_POST["nombre"];
-$celular = $_POST["celular"];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nombre_completo = $_POST['nombre_completo'];
+    $documento_de_identificacion = $_POST['documento_de_identificacion'];
+    $turno_trabajo = $_POST['turno_trabajo'];
+    $salario = $_POST['salario'];
+    $rol = $_POST['rol'];
 
-// Query SQL a la BD. Si tienen que hacer comprobaciones, hacerlas acá (Generar una query diferente para casos especiales)
-$query = "INSERT INTO `cliente`(`cedula`,`nombre`, `celular`) VALUES ('$cedula', '$nombre', '$celular')";
+    // Consulta para insertar datos en la tabla bibliotecario
+    $query = "INSERT INTO bibliotecario (nombre_completo, documento_de_identificacion, turno_trabajo, salario, rol) 
+              VALUES ('$nombre_completo', '$documento_de_identificacion', '$turno_trabajo', '$salario', '$rol')";
 
-// Ejecutar consulta
-$result = mysqli_query($conn, $query) or die(mysqli_error($conn));
+    // Ejecutar consulta
+    $result = mysqli_query($conn, $query);
 
-// Redirigir al usuario a la misma pagina
-if($result):
-    // Si fue exitosa, redirigirse de nuevo a la página de la entidad
-	header("Location: cliente.php");
-else:
-	echo "Ha ocurrido un error al crear la persona";
-endif;
+    // Redirigir al usuario
+    if ($result) {
+        header("Location: bibliotecario.php?success=1");
+    } else {
+        header("Location: bibliotecario.php?error=1");
+    }
 
-mysqli_close($conn);
+    // Cerrar conexión
+    mysqli_close($conn);
+}
+?>
