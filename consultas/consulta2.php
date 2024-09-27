@@ -2,23 +2,54 @@
 include "../includes/header.php";
 ?>
 
-<!-- TÍTULO. Cambiarlo, pero dejar especificada la analogía -->
 <h1 class="mt-3">Consulta 2</h1>
 
 <p class="mt-3">
-    Sea sumavalor la suma de los valores de todos los proyectos asociados con un cliente.
-    El segundo botón debe mostrar el código y el valor de cada uno de los proyectos 
-    que cumple todas las siguientes condiciones: tiene un valor mayor que el 
-    presupuesto de la empresa que lo revisa y además el cliente que lo revisa es el 
-    gerente de la empresa que lo revisa.
+    Esta consulta muestra el identificador, nombre de los tres roles que tienen 
+    mayor suma de páginas revisadas por bibliotecarios y la cantidad de páginas
+    revisadas por cada rol. En caso de empate, se mostrarán los roles que empataron.
 </p>
 
 <?php
 // Crear conexión con la BD
 require('../config/conexion.php');
 
-// Query SQL a la BD -> Crearla acá (No está completada, cambiarla a su contexto y a su analogía)
-$query = "SELECT codigo, valor FROM proyecto";
+// Query SQL para obtener los 3 roles con mayor suma de páginas revisadas
+$query = "
+WITH PaginasRevisadas AS (
+    SELECT 
+        r.identificador,
+        r.nombre,
+        SUM(e.numero_de_paginas) AS total_paginas
+    FROM 
+        rol r
+    LEFT JOIN 
+        bibliotecario b ON r.identificador = b.rol
+    LEFT JOIN 
+        ejemplar e ON b.documento_de_identificacion = e.revisor
+    GROUP BY 
+        r.identificador, r.nombre
+),
+RolesRanked AS (
+    SELECT 
+        identificador,
+        nombre,
+        total_paginas,
+        DENSE_RANK() OVER (ORDER BY total_paginas DESC) AS ranking
+    FROM 
+        PaginasRevisadas
+)
+
+SELECT 
+    identificador, 
+    nombre, 
+    total_paginas
+FROM 
+    RolesRanked
+WHERE 
+    ranking <= 3
+ORDER BY
+    total_paginas DESC;";
 
 // Ejecutar la consulta
 $resultadoC2 = mysqli_query($conn, $query) or die(mysqli_error($conn));
@@ -30,55 +61,46 @@ mysqli_close($conn);
 // Verificar si llegan datos
 if($resultadoC2 and $resultadoC2->num_rows > 0):
 ?>
-
-<!-- MOSTRAR LA TABLA. Cambiar las cabeceras -->
-<div class="tabla mt-5 mx-3 rounded-3 overflow-hidden">
-
-    <table class="table table-striped table-bordered">
-
-        <!-- Títulos de la tabla, cambiarlos -->
-        <thead class="table-dark">
-            <tr>
-                <th scope="col" class="text-center">Cédula</th>
-                <th scope="col" class="text-center">Nombre</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-            <?php
-            // Iterar sobre los registros que llegaron
-            foreach ($resultadoC2 as $fila):
-            ?>
-
-            <!-- Fila que se generará -->
-            <tr>
-                <!-- Cada una de las columnas, con su valor correspondiente -->
-                <td class="text-center"><?= $fila["cedula"]; ?></td>
-                <td class="text-center"><?= $fila["nombre"]; ?></td>
-            </tr>
-
-            <?php
-            // Cerrar los estructuras de control
-            endforeach;
-            ?>
-
-        </tbody>
-
-    </table>
+<div class="container mt-3">
+    <!-- Botón de flecha hacia la izquierda -->
+    <button onclick="window.history.back();" class="btn btn-secondary btn-sm">
+        &larr; Volver
+    </button>
+    <div class="tabla mt-5 mx-3 rounded-3 overflow-hidden">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col" class="text-center">Identificador</th>
+                    <th scope="col" class="text-center">Nombre</th>
+                    <th scope="col" class="text-center">Total Páginas Revisadas</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                // Iterar sobre los registros que llegaron
+                foreach ($resultadoC2 as $fila):
+                ?>
+                <tr>
+                    <td class="text-center"><?= $fila["identificador"]; ?></td>
+                    <td class="text-center"><?= $fila["nombre"]; ?></td>
+                    <td class="text-center"><?= $fila["total_paginas"]; ?></td>
+                </tr>
+                <?php
+                endforeach;
+                ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<!-- Mensaje de error si no hay resultados -->
-<?php
-else:
-?>
+<?php else: ?>
 
 <div class="alert alert-danger text-center mt-5">
     No se encontraron resultados para esta consulta
 </div>
 
-<?php
-endif;
+<?php endif; ?>
 
+<?php
 include "../includes/footer.php";
 ?>

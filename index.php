@@ -46,8 +46,7 @@
             <li><a href="bibliotecario/bibliotecario.php">Entidad análoga a MECÁNICO (BIBLIOTECARIO)</a></li>
             <li><a href="ejemplar/ejemplar.php">Entidad análoga a REPARACIÓN (EJEMPLAR)</a></li>
             <li><a href="rol/rol.php">Entidad análoga a DEPARTAMENTO (ROL)</a></li>
-            <li><a href="consultas/consulta1.php">Consulta 1</a></li>
-            <li><a href="consultas/consulta2.php">Consulta 2</a></li>
+            <li><a href="consultas/consultas.php">Consultas</a></li>
             <li><a href="busqueda/busqueda1.php">Búsqueda 1</a></li>
             <li><a href="busqueda/busqueda2.php">Búsqueda 2</a></li>
         </ul>

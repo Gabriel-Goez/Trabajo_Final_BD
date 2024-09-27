@@ -20,8 +20,7 @@
 
       <ul class="nav nav-pills">
         <li class="nav-item"><a href="/" class="nav-link active" aria-current="page">Inicio</a></li>
-        <li class="nav-item"><a href="/consultas/consulta1" class="nav-link">Consulta 1</a></li>
-        <li class="nav-item"><a href="/consultas/consulta2" class="nav-link">Consulta 2</a></li>
+        <li class="nav-item"><a href="/consultas/consultas" class="nav-link">Consultas</a></li>
         <li class="nav-item"><a href="/busqueda/busqueda1" class="nav-link">Búsqueda 1</a></li>
         <li class="nav-item"><a href="/busqueda/busqueda2" class="nav-link">Búsqueda 2</a></li>
       </ul>
