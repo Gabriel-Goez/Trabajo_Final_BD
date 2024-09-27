@@ -6,9 +6,9 @@ include "../includes/header.php";
 <h1 class="mt-3">Búsqueda 1</h1>
 
 <p class="mt-3">
-    Dos fechas f1 y f2 (cada fecha con día, mes y año), f2 ≥ f1 y un número entero n,
-    n ≥ 0. Se debe mostrar la cédula y el celular de todos los clientes que han 
-    revisado exactamente n proyectos en dicho rango de fechas [f1, f2].
+    Ingrese el documento de identificación de un bibliotecario y un 
+    rango de fechas (Fecha 2 > Fecha 1) para obtener el número total
+    de páginas revisadas por el bibliotecario, junto con su nombre.
 </p>
 
 <!-- FORMULARIO. Cambiar los campos de acuerdo a su trabajo -->
@@ -28,7 +28,7 @@ include "../includes/header.php";
         </div>
 
         <div class="mb-3">
-            <label for="numero" class="form-label">Número</label>
+            <label for="numero" class="form-label">Documento de identificación</label>
             <input type="number" class="form-control" id="numero" name="numero" required>
         </div>
 
@@ -50,7 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
     $numero = $_POST["numero"];
 
     // Query SQL a la BD -> Crearla acá (No está completada, cambiarla a su contexto y a su analogía)
-    $query = "SELECT cedula, celular FROM cliente";
+    $query = "SELECT nombre_completo, SUM(numero_de_paginas) AS paginas
+              FROM bibliotecario b JOIN (SELECT revisor, numero_de_paginas, fecha_de_ingreso FROM ejemplar) e ON b.documento_de_identificacion = e.revisor 
+              WHERE (documento_de_identificacion = ".$numero." AND fecha_de_ingreso >= '".$fecha1."' AND fecha_de_ingreso <= '".$fecha2."') GROUP BY documento_de_identificacion;";
 
     // Ejecutar la consulta
     $resultadoB1 = mysqli_query($conn, $query) or die(mysqli_error($conn));
@@ -69,8 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
         <!-- Títulos de la tabla, cambiarlos -->
         <thead class="table-dark">
             <tr>
-                <th scope="col" class="text-center">Cédula</th>
-                <th scope="col" class="text-center">Celular</th>
+                <th scope="col" class="text-center">Nombre del bibliotecario</th>
+                <th scope="col" class="text-center">Páginas</th>
             </tr>
         </thead>
 
@@ -84,8 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
             <!-- Fila que se generará -->
             <tr>
                 <!-- Cada una de las columnas, con su valor correspondiente -->
-                <td class="text-center"><?= $fila["cedula"]; ?></td>
-                <td class="text-center"><?= $fila["celular"]; ?></td>
+                <td class="text-center"><?= $fila["nombre_completo"]; ?></td>
+                <td class="text-center"><?= $fila["paginas"]; ?></td>
             </tr>
 
             <?php

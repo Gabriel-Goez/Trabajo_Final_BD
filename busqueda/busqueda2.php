@@ -6,9 +6,9 @@ include "../includes/header.php";
 <h1 class="mt-3">Búsqueda 2</h1>
 
 <p class="mt-3">
-    Dos números enteros n1 y n2, n1 ≥ 0, n2 > n1. Se debe mostrar el nit y el 
-    nombre de todas las empresas que han revisado entre n1 y n2 proyectos
-    (intervalo cerrado [n1, n2]).
+    Ingrese el identificador de un rol para obtener el bibliotecario
+    con dicho rol de mayor salario (desempate por menor cédula), y
+    todos los datos de cada ejemplar que revisó.
 </p>
 
 <!-- FORMULARIO. Cambiar los campos de acuerdo a su trabajo -->
@@ -18,13 +18,8 @@ include "../includes/header.php";
     <form action="busqueda2.php" method="post" class="form-group">
 
         <div class="mb-3">
-            <label for="numero1" class="form-label">Numero 1</label>
+            <label for="numero1" class="form-label">Rol</label>
             <input type="number" class="form-control" id="numero1" name="numero1" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="numero2" class="form-label">Numero 2</label>
-            <input type="number" class="form-control" id="numero2" name="numero2" required>
         </div>
 
         <button type="submit" class="btn btn-primary">Buscar</button>
@@ -41,10 +36,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
     require('../config/conexion.php');
 
     $numero1 = $_POST["numero1"];
-    $numero2 = $_POST["numero2"];
 
     // Query SQL a la BD -> Crearla acá (No está completada, cambiarla a su contexto y a su analogía)
-    $query = "SELECT nit, nombre FROM empresa";
+    $query = "SELECT e.*
+              FROM bibliotecario b1 JOIN ejemplar e
+              ON b1.documento_de_identificacion = e.revisor
+              WHERE rol = ".$numero1." AND
+                salario IN (SELECT MAX(salario)
+                            FROM (SELECT *
+                                  FROM bibliotecario
+                                  WHERE rol = ".$numero1.") b2
+                                  ) AND
+                                        NOT EXISTS (SELECT *
+                                                    FROM (SELECT *
+                                                          FROM bibliotecario
+                                                          WHERE rol = ".$numero1.") b4
+                                                    WHERE b4.documento_de_identificacion < b1.documento_de_identificacion);";
 
     // Ejecutar la consulta
     $resultadoB2 = mysqli_query($conn, $query) or die(mysqli_error($conn));
@@ -63,8 +70,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
         <!-- Títulos de la tabla, cambiarlos -->
         <thead class="table-dark">
             <tr>
-                <th scope="col" class="text-center">Cédula</th>
-                <th scope="col" class="text-center">Celular</th>
+                <th scope="col" class="text-center">identificador</th>
+                <th scope="col" class="text-center">estado</th>
+                <th scope="col" class="text-center">edicion</th>
+                <th scope="col" class="text-center">formato</th>
+                <th scope="col" class="text-center">idioma</th>
+                <th scope="col" class="text-center">isbn</th>
+                <th scope="col" class="text-center">editorial</th>
+                <th scope="col" class="text-center">revisor</th>
+                <th scope="col" class="text-center">receptor</th>
+                <th scope="col" class="text-center">numero_de_paginas</th>
+                <th scope="col" class="text-center">fecha_de_ingreso</th>
             </tr>
         </thead>
 
@@ -78,8 +94,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'):
             <!-- Fila que se generará -->
             <tr>
                 <!-- Cada una de las columnas, con su valor correspondiente -->
-                <td class="text-center"><?= $fila["cedula"]; ?></td>
-                <td class="text-center"><?= $fila["celular"]; ?></td>
+                <td class="text-center"><?= $fila["identificador"]; ?></td>
+                <td class="text-center"><?= $fila["estado"]; ?></td>
+                <td class="text-center"><?= $fila["edicion"]; ?></td>
+                <td class="text-center"><?= $fila["formato"]; ?></td>
+                <td class="text-center"><?= $fila["idioma"]; ?></td>
+                <td class="text-center"><?= $fila["isbn"]; ?></td>
+                <td class="text-center"><?= $fila["editorial"]; ?></td>
+                <td class="text-center"><?= $fila["revisor"]; ?></td>
+                <td class="text-center"><?= $fila["receptor"]; ?></td>
+                <td class="text-center"><?= $fila["numero_de_paginas"]; ?></td>
+                <td class="text-center"><?= $fila["fecha_de_ingreso"]; ?></td>
             </tr>
 
             <?php
