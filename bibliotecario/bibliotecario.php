@@ -81,6 +81,3 @@ function validarFormulario() {
 // Incluir el archivo que contiene la lógica de selección de bibliotecarios
 require("bibliotecario_select.php");
 ?>
-<?php
-include "../includes/footer.php";
-?>

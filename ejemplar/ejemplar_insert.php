@@ -1,26 +1,29 @@
 <?php
- 
-// Crear conexión con la BD
-require('../config/conexion.php');
+require "../config/conexion.php"; // Conectar a la base de datos
 
-// Sacar los datos del formulario. Cada input se identifica con su "name"
-$nit = $_POST["nit"];
-$nombre = $_POST["nombre"];
-$presupuesto = $_POST["presupuesto"];
-$cliente = $_POST["cliente"];
+// Capturar los datos enviados por el formulario
+$identificador = $_POST['identificador'];
+$estado = $_POST['estado'];
+$edicion = $_POST['edicion'];
+$formato = $_POST['formato'];
+$idioma = $_POST['idioma'];
+$isbn = $_POST['isbn'];
+$editorial = $_POST['editorial'];
+$numero_de_paginas = $_POST['numero_de_paginas'];
+$fecha_de_ingreso = $_POST['fecha_de_ingreso'];
+$receptor = $_POST['receptor'];
+$revisor = !empty($_POST['revisor']) ? $_POST['revisor'] : NULL; // Si no hay revisor, se deja como NULL
 
-// Query SQL a la BD. Si tienen que hacer comprobaciones, hacerlas acá (Generar una query diferente para casos especiales)
-$query = "INSERT INTO `empresa`(`nit`,`nombre`, `presupuesto`, `cliente`) VALUES ('$nit', '$nombre', '$presupuesto', '$cliente')";
+// Consulta SQL para insertar los datos
+$query = "INSERT INTO ejemplar (identificador, estado, edicion, formato, idioma, isbn, editorial, numero_de_paginas, fecha_de_ingreso, receptor, revisor)
+          VALUES ('$identificador', '$estado', '$edicion', '$formato', '$idioma', '$isbn', '$editorial', '$numero_de_paginas', '$fecha_de_ingreso', '$receptor', NULLIF('$revisor', ''))";
 
-// Ejecutar consulta
-$result = mysqli_query($conn, $query) or die(mysqli_error($conn));
+// Ejecutar la consulta
+if (mysqli_query($conn, $query)) {
+    echo "Ejemplar insertado correctamente.";
+} else {
+    echo "Error: " . mysqli_error($conn);
+}
 
-// Redirigir al usuario a la misma pagina
-if($result):
-    // Si fue exitosa, redirigirse de nuevo a la página de la entidad
-	header("Location: empresa.php");
-else:
-	echo "Ha ocurrido un error al crear la persona";
-endif;
-
-mysqli_close($conn);
+mysqli_close($conn); // Cerrar la conexión
+?>

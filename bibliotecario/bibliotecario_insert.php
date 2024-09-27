@@ -1,5 +1,5 @@
 <?php
- 
+
 // Crear conexión con la BD
 require('../config/conexion.php');
 
@@ -23,6 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         header("Location: bibliotecario.php?error=1");
     }
+
 
     // Cerrar conexión
     mysqli_close($conn);
