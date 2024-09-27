@@ -1,23 +1,54 @@
-CREATE TABLE cliente(
-  cedula INT(10) PRIMARY KEY,
-  nombre VARCHAR(50) NOT NULL,
-  celular INT(10) NOT NULL
+-- Relación ROL
+CREATE TABLE rol(
+  identificador VARCHAR(4) PRIMARY KEY,
+  nombre VARCHAR(50) UNIQUE NOT NULL
+);
+  
+-- Relación BIBLIOTECARIO
+CREATE TABLE bibliotecario(
+    nombre_completo VARCHAR(50) NOT NULL,
+    documento_de_identificacion INT(10) PRIMARY KEY CHECK (documento_de_identificacion > 10000000),
+    turno_trabajo VARCHAR(7) NOT NULL CHECK (turno_trabajo IN ('Mañana', 'Tarde', 'Noche')),
+  	salario INT(8) NOT NULL,
+  	rol VARCHAR(4) NOT NULL REFERENCES rol(identificador)
 );
 
-CREATE TABLE empresa(
-  nit INT(10) PRIMARY KEY,
-  nombre VARCHAR(50) NOT NULL,
-  presupuesto INT(10) NOT NULL,
-  cliente INT(10),
-  FOREIGN KEY(cliente) REFERENCES cliente
+-- Relación EJEMPLAR
+CREATE TABLE ejemplar(
+    identificador INT(4) PRIMARY KEY,
+    estado VARCHAR(13) NOT NULL CHECK (estado = 'Disponible' OR estado = 'No Disponible'),
+    edicion INT(1) NOT NULL,
+    formato VARCHAR(7) NOT NULL CHECK (formato = 'Digital' OR formato = 'Físico'),
+    idioma VARCHAR(10) NOT NULL,
+    isbn VARCHAR(20) NOT NULL,
+    editorial VARCHAR(12) NOT NULL,
+    revisor INT(10),
+    receptor INT(10) NOT NULL,
+    numero_de_paginas INT(4) NOT NULL,
+    fecha_de_ingreso DATE NOT NULL,
+    FOREIGN KEY (revisor) REFERENCES bibliotecario(documento_de_identificacion),
+    FOREIGN KEY (receptor) REFERENCES bibliotecario(documento_de_identificacion),
+    CHECK (revisor <> receptor)
 );
 
-CREATE TABLE proyecto(
-  codigo INT(10) PRIMARY KEY,
-  fechacreacion DATE NOT NULL,
-  valor INT(10) NOT NULL,
-  cliente INT(10),
-  empresa INT(10),
-  FOREIGN KEY(cliente) REFERENCES cliente,
-  FOREIGN KEY(empresa) REFERENCES empresa
-);
+
+
+-- Inserción de roles
+INSERT INTO rol VALUES(1, 'Historico');
+INSERT INTO rol VALUES(2, 'Adquisiciones');
+INSERT INTO rol VALUES(3, 'Catalogo');
+
+-- Inserción de bibliotecarios
+INSERT INTO bibliotecario VALUES('Laura Fernández Gómez', 56789012, 'Mañana', 10000000, 1);
+INSERT INTO bibliotecario VALUES('Miguel Torres Martínez', 67890123, 'Tarde', 850000, 3);
+INSERT INTO bibliotecario VALUES('Sofía García Rodríguez', 78901234, 'Noche', 905000, 1);
+INSERT INTO bibliotecario VALUES('Santiago Joel Henao', 96252514, 'Mañana', 560000, 2);
+
+-- Inserción de ejemplares
+INSERT INTO ejemplar VALUES(3456, 'Disponible', 1, 'Digital', 'Español', '978-3-16-148410-0', 'Penguin', 56789012, 67890123, 150, '2022-01-03');
+INSERT INTO ejemplar VALUES(4567, 'No Disponible', 2, 'Físico', 'Español', '979-0-306-40615-7', 'Random House', 96252514, 78901234, 300, '2024-02-25');
+INSERT INTO ejemplar VALUES(5678, 'No Disponible', 2, 'Físico', 'Español', '978-1-4028-9462-6', 'De Bolsillo', 56789012, 96252514, 940, '2024-01-01');
+INSERT INTO ejemplar VALUES(1011, 'Disponible', 1, 'Digital', 'Español', '978-0-596-52068-7', 'Planeta', 67890123, 96252514, 198, '2023-05-05');
+INSERT INTO ejemplar VALUES(1010, 'Disponible', 1, 'Digital', 'Inglés', '978-0-596-52068-7', 'Random House', NULL, 67890123, 542, '2023-05-04');
+INSERT INTO ejemplar VALUES(1212, 'Disponible', 5, 'Físico', 'Español', '979-1-60309-452-8', 'Alfaguara', 96252514, 67890123, 433, '2021-02-28');
+INSERT INTO ejemplar VALUES(1313, 'Disponible', 2, 'Físico', 'Español', '979-0-7432-7356-5', 'De Bolsillo', NULL, 78901234, 200, '2022-01-30');
