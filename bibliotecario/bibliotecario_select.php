@@ -46,7 +46,7 @@ if ($resultadoBibliotecarios && mysqli_num_rows($resultadoBibliotecarios) > 0):
                 <td class="text-center"><?= htmlspecialchars($fila["documento_de_identificacion"]); ?></td>
                 <td class="text-center"><?= htmlspecialchars($fila["turno_trabajo"]); ?></td>
                 <td class="text-center"><?= htmlspecialchars($fila["salario"]); ?></td>
-                <td class="text-center"><?= htmlspecialchars($fila["rol_nombre"]); ?> (ID: <?= htmlspecialchars($fila["rol"]); ?>)</td>
+                <td class="text-center">ID: <?= htmlspecialchars($fila["rol"]); ?> (<?= htmlspecialchars($fila["rol_nombre"]); ?>)</td>
             </tr>
 
             <?php endwhile; ?>
